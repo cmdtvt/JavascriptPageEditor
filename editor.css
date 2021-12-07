@@ -1,0 +1,31 @@
+.editor {
+    position:fixed;
+    z-index: 100;
+    background-color: rgba(131, 131, 131, 0.671);
+    min-height: 100vh;
+}
+
+.editor-area {
+    background-color:#ffffff;
+    height: 100vh;
+}
+
+*[id^=edit-] {
+    border: 5px dotted rgb(0, 162, 255);
+}
+
+*[id^=edit-]:hover {
+    cursor: pointer;
+    transition: 0.25s;
+    border: 5px dotted rgb(5, 119, 185);
+    background-color: rgb(223, 223, 223);
+}
+
+.editor-selected {
+    border: 5px dotted rgb(255, 166, 0);
+}
+
+.inedit {
+    border: 10px solid orange;
+}
+
