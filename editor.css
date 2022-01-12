@@ -8,6 +8,8 @@
 .editor-area {
     background-color:#ffffff;
     height: 100vh;
+    overflow-y: scroll;
+    padding-bottom: 25px;
 }
 
 *[id^=edit-] {
@@ -21,11 +23,35 @@
     background-color: rgb(223, 223, 223);
 }
 
+*[id^=editImage-] {
+    border: 5px dotted rgb(0, 162, 255);
+}
+
+*[id^=editImage-]:hover {
+    cursor: pointer;
+    transition: 0.25s;
+    border: 5px dotted rgb(5, 119, 185);
+    filter:opacity(80%);
+}
+
 .editor-selected {
     border: 5px dotted rgb(255, 166, 0);
 }
 
 .inedit {
     border: 10px solid orange;
+}
+
+.editImage {
+    max-height: 75px;
+    margin-top: 25px;
+	filter: opacity(85%);
+	border: 3px solid #ffffff;
+}
+.editImage:hover {
+	cursor: pointer;
+	filter: opacity(100%);
+	border: 3px solid #36d8b8;;
+	transition: 0.25s;
 }
 

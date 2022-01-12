@@ -1,8 +1,32 @@
 //Javascript page text editor. by Topi-Veikko Tuusa
 
+var gallery_images = [];
+/*
+url should have an list where elements are structured as is below. (api)
+{"id":"2","filename":"example.jpg","location":"assets/example.jpg"}
+*/
+url = ""; 
+fetch(url)
+.then(res => res.json())
+.then(out => {
+    for (var i = 0; i < out.length; i++) {
+        gallery_images.push("assets/uploads/"+out[i]['location'].replace("\n",""));
+    }
+})	
+.catch(err => console.log(err));
 
 function closeEditor(){
     document.getElementById("editor").style.display="none";
+    document.getElementsByTagName('body')[0].style.overflow="scroll";
+
+}
+
+function selectImage(element,id) {
+    document.getElementById("image").value = element.src;
+    document.getElementById(id).src = element.src;
+    document.getElementById("targetName").value = id;
+    console.log(document.getElementById(id).src);
+    console.log(element.src);
 }
 
 document.addEventListener("DOMContentLoaded", function(event) {
@@ -28,31 +52,31 @@ document.addEventListener("DOMContentLoaded", function(event) {
     document.getElementsByTagName("body")[0].classList.add("inedit");
 
 
-    
+    editorTextLayout = `
+        <div class="col-md-12">
+            <textarea id="editor-textarea" class="form-control" placeholder="Muuttettava teksti" rows=25 name="text"></textarea>
+        </div>
+        <div class="col-md-9"></div>
+        <div class="col-md-3">
+            <button class="btn btn-success btn-full" type="submit">Tallenna</button>
+        </div>
+    `;
+
+
 
     editorHtml = `
         <div class="container-fluid editor" id="editor">
             <div class="row">
                 <form class="offset-md-7 col-md-5 editor-area" action="action" method="POST">
-                    <input type="hidden" name="action" value="updateText"/>
+                    <input type="hidden" name="action" value="updateText" id="action"/>
                     <input type="hidden" name="targetName" id="targetName" value=""/>
                     <div class="row">
                         <div class="offset-md-10 col-md-2">
                             <button class="btn btn-info btn-full" onclick="closeEditor()" type="button">Sulje</button>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <textarea id="editor-textarea" class="form-control" placeholder="Muuttettava teksti" rows=25 name="text"></textarea>
-                        </div>
+                    <div class="row" id="editor-layout">
 
-                        <div class="col-md-10">
-
-                        </div>
-
-                        <div class="col-md-2">
-                            <button class="btn btn-success btn-full" type="submit">Tallenna</button>
-                        </div>
                     </div>
                 </form>
             </div>
@@ -66,32 +90,86 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
 
 
-    function runEditor(element,text) {
+    function toggleEditorVisibility() {
+        document.getElementsByTagName('body')[0].style.overflow="hidden";
         document.getElementById("editor").style.display="block";
-        document.getElementById("targetName").value = element.replace('edit-','');;
+    }
+
+    function runEditor(element,text) {
+        toggleEditorVisibility()
+        document.getElementById("targetName").value = element.replace('edit-','');
+        document.getElementById("action").value="updateText";
+        document.getElementById("editor-layout").innerHTML = editorTextLayout;
+
         textarea = document.getElementById("editor-textarea");
         textarea.value = text;
     }
 
+    var imagesLoaded = false;
+    var editorImages = ""
+    function runImageEditor(id) {
+        toggleEditorVisibility()
+        document.getElementById("action").value="updateImage";
+        
+        if (!imagesLoaded) {
+            for (let i = 0; i < gallery_images.length; i++) {
+                const element = gallery_images[i];
+                editorImages += `
+                    <div class="col-md-3">
+                        <img src="${element}" class="img-fluid editImage mx-auto d-block" onclick="selectImage(this,'${id}');">
+                    </div>
+                `;
+            }
+            imagesLoaded = true;
+        }
 
-    var ids = [];
+        document.getElementById("editor-layout").innerHTML = `
+            <input type="hidden" name="image" value="" id="image"/>
+            ${editorImages}
+            <div class="col-md-9"></div>
+            <div class="col-md-3">
+                <button class="btn btn-success btn-full" type="submit">Tallenna</button>
+            </div>
+        `;
+
+    }
+
+
+
+
+    var text_ids = [];
+    var image_ids = [];
+
+    //Find all marked elements from page that can be edited.
     $("*").each(function() {
         if (this.id) {
+            //Editable text
             if(this.id.startsWith("edit-")) {
-                ids.push(this.id);
+                text_ids.push(this.id);
+            }
+
+            //Editable image
+            if(this.id.startsWith("editImage-")) {
+                image_ids.push(this.id);
             }
         }
     });
 
-    for (let i = 0; i < ids.length; i++) {
-        const element = ids[i];
+    for (let i = 0; i < text_ids.length; i++) {
+        const element = text_ids[i];
         document.getElementById(element).addEventListener("click", function() {
-            console.log("Clicked: "+element);
+            console.log("Clicked text: "+element);
             runEditor(element,this.textContent);
         });
     }
-    console.log(ids);
 
-
+    for (let i = 0; i < image_ids.length; i++) {
+        const element = image_ids[i];
+        document.getElementById(element).addEventListener("click",function(){
+            console.log("Cliked image: "+element);
+            runImageEditor(element);
+        });
+        
+    }
 });
 
