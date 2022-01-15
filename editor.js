@@ -1,11 +1,7 @@
 //Javascript page text editor. by Topi-Veikko Tuusa
 
 var gallery_images = [];
-/*
-url should have an list where elements are structured as is below. (api)
-{"id":"2","filename":"example.jpg","location":"assets/example.jpg"}
-*/
-url = ""; 
+url = "";
 fetch(url)
 .then(res => res.json())
 .then(out => {
@@ -24,7 +20,7 @@ function closeEditor(){
 function selectImage(element,id) {
     document.getElementById("image").value = element.src;
     document.getElementById(id).src = element.src;
-    document.getElementById("targetName").value = id;
+    document.getElementById("targetName").value = id.replace('editImage-','');;
     console.log(document.getElementById(id).src);
     console.log(element.src);
 }
@@ -109,7 +105,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
     var editorImages = ""
     function runImageEditor(id) {
         toggleEditorVisibility()
-        document.getElementById("action").value="updateImage";
+        document.getElementById("action").value="updatePageImage";
         
         if (!imagesLoaded) {
             for (let i = 0; i < gallery_images.length; i++) {
