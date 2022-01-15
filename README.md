@@ -20,7 +20,7 @@ Editor has form that send POST request to file called action by default when cli
 What the POST request contains.
 |Name|Value  |
 |--|--|
-|action| `updateText` or `updateImage` |
+|action| `updateText` or `updatePageImage` |
 |targetName|id where `edit-` and `editImage-` are removed.|
 |text|Has edited text|
 |image|Has selected image|
